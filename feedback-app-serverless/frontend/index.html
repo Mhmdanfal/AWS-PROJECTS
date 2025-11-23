@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Feedback Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #1a73e8;
+      color: white;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #155fc0;
+    }
+    .msg {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Submit Feedback</h1>
+
+  <form id="feedbackForm">
+    <label>Name</label>
+    <input type="text" name="name" required />
+
+    <label>Email</label>
+    <input type="email" name="email" required />
+
+    <label>Message</label>
+    <textarea name="message" rows="4" required></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div class="msg" id="msg"></div>
+
+  <script>
+    // UPDATE THIS with your real API Gateway URL (include /feedback)
+    const apiUrl = "https://YOUR_API_ID.execute-api.us-east-1.amazonaws.com/prod/feedback";
+    // no api id written for security because this git is public
+    const form = document.getElementById("feedbackForm");
+    const msgDiv = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msgDiv.textContent = "Submitting...";
+
+      const formData = new FormData(form);
+
+      const payload = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        message: formData.get("message")
+      };
+
+      try {
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          msgDiv.textContent = "Error: " + (data.error || "Unknown error");
+        } else {
+          msgDiv.textContent = "Thank you! Your feedback ID: " + data.id;
+          form.reset();
+        }
+      } catch (error) {
+        console.error(error);
+        msgDiv.textContent = "Network error. Try again later.";
+      }
+    });
+  </script>
+
+</body>
+</html>
 
