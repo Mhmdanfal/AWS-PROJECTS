@@ -1,29 +1,35 @@
-{
-"Version": "2012-10-17",
-"Statement": [
-{
-"Effect": "Allow",
-"Action": [
-"ec2:DescribeInstances",
-"ec2:StopInstances"
-],
-"Resource": "*"
-},
-{
-"Effect": "Allow",
-"Action": [
-"sns:Publish"
-],
-"Resource": "arn:aws:sns:us-east-1:767397790772:EC2-notifications"
-},
-{
-"Effect": "Allow",
-"Action": [
-"logs:CreateLogGroup",
-"logs:CreateLogStream",
-"logs:PutLogEvents"
-],
-"Resource": "*"
-}
+import boto3
+
+
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:767397790772:EC2-notifications'
+TAG_KEY = 'AutoManaged'
+TAG_VALUE = 'true'
+
+
+ec2 = boto3.client('ec2')
+sns = boto3.client('sns')
+
+
+
+
+def lambda_handler(event, context):
+filters = [
+{'Name': f'tag:{TAG_KEY}', 'Values': [TAG_VALUE]},
+{'Name': 'instance-state-name', 'Values': ['running', 'pending']}
 ]
-}
+resp = ec2.describe_instances(Filters=filters)
+instances = []
+for r in resp.get('Reservations', []):
+for i in r.get('Instances', []):
+instances.append(i['InstanceId'])
+
+
+if instances:
+ec2.stop_instances(InstanceIds=instances)
+message = f"Stopped instances: {instances}"
+else:
+message = "No instances to stop."
+
+
+sns.publish(TopicArn=SNS_TOPIC_ARN, Subject='EC2 Stop Report', Message=message)
+return {'status': 'ok', 'message': message}
