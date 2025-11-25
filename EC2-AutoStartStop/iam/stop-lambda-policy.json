@@ -1,1 +1,29 @@
 
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Action": [
+"ec2:DescribeInstances",
+"ec2:StopInstances"
+],
+"Resource": "*"
+},
+{
+"Effect": "Allow",
+"Action": [
+"sns:Publish"
+],
+"Resource": "arn:aws:sns:us-east-1:767397790772:EC2-notifications"
+},
+{
+"Effect": "Allow",
+"Action": [
+"logs:CreateLogGroup",
+"logs:CreateLogStream",
+"logs:PutLogEvents"
+],
+"Resource": "*"
+}
+]
+}
