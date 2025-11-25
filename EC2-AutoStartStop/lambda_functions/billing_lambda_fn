@@ -1,36 +1,58 @@
-{
-"Version": "2012-10-17",
-"Statement": [
-{
-"Effect": "Allow",
-"Action": [
-"ce:GetCostAndUsage",
-"ce:GetCostForecast"
-],
-"Resource": "*"
-},
-{
-"Effect": "Allow",
-"Action": [
-"ec2:DescribeInstances"
-],
-"Resource": "*"
-},
-{
-"Effect": "Allow",
-"Action": [
-"sns:Publish"
-],
-"Resource": "arn:aws:sns:us-east-1:767397790772:EC2-notifications"
-},
-{
-"Effect": "Allow",
-"Action": [
-"logs:CreateLogGroup",
-"logs:CreateLogStream",
-"logs:PutLogEvents"
-],
-"Resource": "*"
-}
+import boto3
+import datetime
+
+
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:767397790772:EC2-notifications'
+TAG_KEY = 'AutoManaged'
+TAG_VALUE = 'true'
+
+
+ce = boto3.client('ce', region_name='us-east-1')
+ec2 = boto3.client('ec2')
+sns = boto3.client('sns')
+
+
+
+
+def get_yesterday_dates():
+today = datetime.date.today()
+yesterday = today - datetime.timedelta(days=1)
+return yesterday.strftime('%Y-%m-%d'), yesterday.strftime('%Y-%m-%d')
+
+
+
+
+def lambda_handler(event, context):
+start, end = get_yesterday_dates()
+# Cost Explorer requires yyyy-mm-dd
+resp = ce.get_cost_and_usage(
+TimePeriod={'Start': start, 'End': end},
+Granularity='DAILY',
+Metrics=['UnblendedCost']
+)
+
+
+amount = '0.00'
+try:
+amount = resp['ResultsByTime'][0]['Total']['UnblendedCost']['Amount']
+except Exception:
+pass
+
+
+# list running AutoManaged instances
+filters = [
+{'Name': f'tag:{TAG_KEY}', 'Values': [TAG_VALUE]},
+{'Name': 'instance-state-name', 'Values': ['running', 'pending']}
 ]
-}
+inst_resp = ec2.describe_instances(Filters=filters)
+instances = []
+for r in inst_resp.get('Reservations', []):
+for i in r.get('Instances', []):
+instances.append(i['InstanceId'])
+
+
+message = f"Date: {start}\nEstimated cost for {start}: ${amount}\nRunning AutoManaged instances: {instances}"
+sns.publish(TopicArn=SNS_TOPIC_ARN, Subject='Daily Billing Report', Message=message)
+
+
+return {'status': 'ok', 'cost': amount, 'instances': instances}
