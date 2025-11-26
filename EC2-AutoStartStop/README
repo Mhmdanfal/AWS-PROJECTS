@@ -1,7 +1,0 @@
-# EC2 Auto Start/Stop Scheduler + Daily Cloud Billing Reporter
-
-Automating EC2 lifecycle + Daily cost visibility using AWS Lambda, EventBridge, SNS, and Cost Explorer
-
-## Overview
-
-This project automates EC2 instance management and cost reporting
