@@ -284,4 +284,15 @@ Confirm the subscription from your inbox
 # Screenshots 
 
 <img width="1904" height="808" alt="Screenshot 2025-11-25 140603" src="https://github.com/user-attachments/assets/9cbaa370-0e5e-4188-bf8f-72b0f988098c" />
-<img width="1908" height="853" alt="Screenshot 2025-11-25 141616" src="https://github.com/user-attachments/assets/20e5375d-24b9-4170-9549-02af9b343c05" />
+<img width="1908" height="853" alt="Screenshot 2025-11-25 141616" src="https://github.com/user-attachments/assets/20e5375d-24![EC2 Start](https://github.com/user-attachments/assets/3578204f-b353-4afd-b7c6-7d4a9d924338)
+b9-4170-9549-02af9b343c05" />
+
+# Email Screenshots
+![EC2 Start](https://github.com/user-attachments/assets/41cd3399-afb7-4207-9bad-3b031168bc90)
+
+![EC2 billing](https://github.com/user-attachments/assets/7bc4620a-c8e1-4a6d-8420-a05ae3ed168a)
+
+Stop](https://github.com/user-attachments/assets/20b3b87a-3886-4177-af3d-c9bf2b9112a7)
+
+ 
+
