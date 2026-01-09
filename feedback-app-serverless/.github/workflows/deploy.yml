@@ -1,0 +1,40 @@
+name: CI-CD Lambda Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install pytest
+        pip install -r lambda/feedback_handler/requirements.txt || true
+
+    - name: Run tests
+      run: pytest -v
+
+    - name: Zip Lambda code
+      run: |
+        cd lambda/feedback_handler
+        zip -r function.zip .
+
+    - name: Deploy Lambda
+      uses: appleboy/lambda-action@v0.2.0
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_region: ap-south-1
+        function_name: feedback_handler
+        zip_file: lambda/feedback_handler/function.zip
