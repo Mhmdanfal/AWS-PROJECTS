@@ -39,5 +39,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-south-1
-          function_name: feedback_handler
+          function_name: feedback-app-serverless-handler
           zip_file: feedback-app-serverless/lambda/feedback_handler/function.zip
