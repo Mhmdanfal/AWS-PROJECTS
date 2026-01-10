@@ -1,3 +1,12 @@
+import boto3
+import json
+import os
+import uuid
+from datetime import datetime, timezone
+
+
+from botocore.exceptions import ClientError
+
 def lambda_handler(event, context):
     """Main Lambda handler for receiving feedback."""
 
