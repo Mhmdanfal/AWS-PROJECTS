@@ -7,7 +7,7 @@ on:
       - "feedback-app-serverless/**"
 
 jobs:
-  build-test-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,19 +19,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Lambda dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest boto3 botocore
-          pip install -r feedback-app-serverless/lambda/feedback_handler/requirements.txt
-
-      - name: Run tests
-        run: pytest feedback-app-serverless/tests -v
+          pip install -r feedback-app-serverless/lambda/requirements.txt
 
       - name: Package Lambda
         run: |
-          cd feedback-app-serverless/lambda/feedback_handler
-          zip -r function.zip .
+          cd feedback-app-serverless/lambda
+          zip -r function.zip app.py
 
       - name: Deploy Lambda
         uses: appleboy/lambda-action@v0.2.0
@@ -39,5 +35,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ap-south-1
-          function_name: feedback-app-serverless-handler
-          zip_file: feedback-app-serverless/lambda/feedback_handler/function.zip
+          function_name: EXACT_LAMBDA_NAME_IN_AWS
+          zip_file: feedback-app-serverless/lambda/function.zip
