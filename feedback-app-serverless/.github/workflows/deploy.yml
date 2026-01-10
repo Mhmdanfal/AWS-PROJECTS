@@ -19,15 +19,16 @@ jobs:
 
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install pytest
-        pip install -r lambda/feedback_handler/requirements.txt || true
+        pip install -r feedback-app-serverless/lambda/feedback_handler/requirements.txt
 
     - name: Run tests
       run: pytest -v
 
     - name: Zip Lambda code
       run: |
-        zip -r lambda/feedback_handler/function.zip lambda/feedback_handler
+        zip -r feedback-app-serverless/lambda/feedback_handler/function.zip feedback-app-serverless/lambda/feedback_handler
 
     - name: Deploy Lambda
       uses: appleboy/lambda-action@v0.2.0
@@ -36,4 +37,4 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: ap-south-1
         function_name: feedback_handler
-        zip_file: lambda/feedback_handler/function.zip
+        zip_file: feedback-app-serverless/lambda/feedback_handler/function.zip
