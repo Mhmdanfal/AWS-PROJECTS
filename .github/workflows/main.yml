@@ -37,6 +37,6 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ap-south-1
-          function_name: EXACT_LAMBDA_NAME_IN_AWS
+          aws_region: us-east-1
+          function_name: feedback_handler
           zip_file: feedback-app-serverless/lambda/function.zip
