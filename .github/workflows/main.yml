@@ -1,0 +1,43 @@
+name: CI-CD Serverless Feedback App
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "feedback-app-serverless/**"
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest boto3 botocore
+          pip install -r feedback-app-serverless/lambda/feedback_handler/requirements.txt
+
+      - name: Run tests
+        run: pytest feedback-app-serverless/tests -v
+
+      - name: Package Lambda
+        run: |
+          cd feedback-app-serverless/lambda/feedback_handler
+          zip -r function.zip .
+
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ap-south-1
+          function_name: feedback_handler
+          zip_file: feedback-app-serverless/lambda/feedback_handler/function.zip
