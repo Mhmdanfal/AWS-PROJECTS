@@ -27,8 +27,7 @@ jobs:
 
     - name: Zip Lambda code
       run: |
-        cd lambda/feedback_handler
-        zip -r function.zip .
+        zip -r lambda/feedback_handler/function.zip lambda/feedback_handler
 
     - name: Deploy Lambda
       uses: appleboy/lambda-action@v0.2.0
