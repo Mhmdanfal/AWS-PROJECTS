@@ -1,7 +1,9 @@
 import sys
 import json
+from pathlib import Path
 
-sys.path.append("feedback-app-serverless/lambda/feedback_handler")
+# Add lambda directory to Python path
+sys.path.append(str(Path(__file__).resolve().parents[1] / "lambda"))
 
 from app import lambda_handler
 
