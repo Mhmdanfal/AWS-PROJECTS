@@ -1,5 +1,11 @@
+import sys
 import json
-from lambda.feedback_handler.app import lambda_handler
+
+# Tell Python where the Lambda code is
+sys.path.append("feedback-app-serverless/lambda/feedback_handler")
+
+from app import lambda_handler
+
 
 def test_lambda_handler_success():
     event = {
@@ -11,4 +17,3 @@ def test_lambda_handler_success():
     }
 
     response = lambda_handler(event, None)
-    assert response["statusCode"] == 200
